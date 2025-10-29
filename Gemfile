@@ -2,6 +2,8 @@
 
 source 'https://rubygems.org'
 
+gem 'grape', '~> 2.4'
+gem 'puma', '~> 7.1'
 gem 'redis', '~> 5.4'
 
 group :development do
