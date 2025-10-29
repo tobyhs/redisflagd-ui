@@ -20,8 +20,11 @@ module RedisFlagd
     # @param limit [Integer] limit of feature flags to return
     # @return [Array<FeatureFlag>] feature flags that match the given pattern
     def list(pattern: nil, limit: DEFAULT_LIMIT)
-      _, entries = @redis.hscan(FLAGS_KEY, 0, match: pattern, count: limit)
-      entries.map do |key, configuration_json|
+      hash = @redis.hgetall(FLAGS_KEY)
+      if pattern
+        hash.select! { |key| File.fnmatch?(pattern, key) }
+      end
+      hash.first(limit).map do |key, configuration_json|
         FeatureFlag.new(key:, configuration: JSON.parse(configuration_json))
       end
     end
