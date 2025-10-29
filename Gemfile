@@ -6,6 +6,7 @@ gem 'redis', '~> 5.4'
 
 group :development do
   gem 'irb'
+  gem 'yard'
 end
 
 group :test do
