@@ -1,3 +1,4 @@
+import { MantineProvider } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { PropsWithChildren } from 'react';
 
@@ -16,7 +17,9 @@ type TestProviderProps = PropsWithChildren<{
 export function TestProvider({ queryClient = createQueryClient(), children }: TestProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <MantineProvider env="test">
+        {children}
+      </MantineProvider>
     </QueryClientProvider>
   )
 }
