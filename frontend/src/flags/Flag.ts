@@ -1,5 +1,4 @@
-type VariantsMap =
-  | Record<string, boolean>
+type VariantsMap = Record<string, boolean>
   | Record<string, string>
   | Record<string, number>
   | Record<string, object>

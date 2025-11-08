@@ -19,7 +19,7 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-});
+})
 class ResizeObserver {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   observe() {}

@@ -17,7 +17,7 @@ describe('FlagsIndexPage', () => {
 
   it('renders error text when there is an error with loading flags', async () => {
     server.use(
-      http.get('/api/flags', () => new HttpResponse(null, { status: 500 }))
+      http.get('/api/flags', () => new HttpResponse(null, { status: 500 })),
     )
     renderRoute('/flags')
     await screen.findByText('Error: Something went wrong when loading feature flags')
@@ -41,7 +41,7 @@ describe('FlagsIndexPage', () => {
     const cells = await screen.findAllByRole('cell')
     expect(cells.map(c => c.textContent)).toEqual([
       'basic-boolean', 'ENABLED', 'on',
-      'basic-string', 'ENABLED', 'blue'
+      'basic-string', 'ENABLED', 'blue',
     ])
   })
 })

@@ -12,11 +12,11 @@ export function FlagsIndexPage() {
     queryFn: async () => {
       const response = await fetch('/api/flags')
       if (!response.ok) {
-        throw new Error(await response.text());
+        throw new Error(await response.text())
       }
       return await response.json() as Flag[]
     },
-  });
+  })
 
   if (isPending) {
     return <progress />

@@ -1,8 +1,8 @@
-import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
+import { render } from '@testing-library/react'
+import { MemoryRouter } from 'react-router'
 
-import { AppRoutes } from '../src/AppRoutes';
-import { TestProvider } from './TestProvider';
+import { AppRoutes } from '../src/AppRoutes'
+import { TestProvider } from './TestProvider'
 
 export function renderRoute(path: string) {
   return render(
@@ -10,6 +10,6 @@ export function renderRoute(path: string) {
       <MemoryRouter initialEntries={[path]}>
         <AppRoutes />
       </MemoryRouter>
-    </TestProvider>
+    </TestProvider>,
   )
 }

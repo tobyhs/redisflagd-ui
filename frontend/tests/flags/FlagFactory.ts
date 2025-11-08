@@ -8,7 +8,7 @@ export const FlagFactory = {
         state: 'ENABLED',
         variants: { on: true, off: false },
         defaultVariant: 'on',
-      }
+      },
     }
   },
 
@@ -19,7 +19,7 @@ export const FlagFactory = {
         state: 'ENABLED',
         variants: { red: 'r', green: 'g', blue: 'b' },
         defaultVariant: 'blue',
-      }
+      },
     }
   },
 }
