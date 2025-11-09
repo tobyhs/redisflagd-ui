@@ -1,5 +1,7 @@
-import { Table } from '@mantine/core'
+import { Table, TextInput } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
+import { type JSX, type KeyboardEvent, useState } from 'react'
+import { useSearchParams } from 'react-router'
 
 import type { Flag } from './Flag'
 
@@ -7,10 +9,14 @@ import type { Flag } from './Flag'
  * @returns component that lists feature flags
  */
 export function FlagsIndexPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const pattern = searchParams.get('pattern')
+  const [patternValue, setPatternValue] = useState(pattern ?? '')
   const { isPending, isError, data: flags } = useQuery({
-    queryKey: ['flags', 'list'],
+    queryKey: ['flags', 'list', { pattern }],
     queryFn: async () => {
-      const response = await fetch('/api/flags')
+      const queryStr = pattern ? `?pattern=${encodeURIComponent(pattern)}` : ''
+      const response = await fetch(`/api/flags${queryStr}`)
       if (!response.ok) {
         throw new Error(await response.text())
       }
@@ -18,15 +24,43 @@ export function FlagsIndexPage() {
     },
   })
 
+  let content: JSX.Element
   if (isPending) {
-    return <progress />
+    content = <progress />
   } else if (isError) {
-    return <div>Error: Something went wrong when loading feature flags</div>
+    content = <div>Error: Something went wrong when loading feature flags</div>
   } else if (flags.length === 0) {
-    return <div>No feature flags found</div>
+    content = <div>No feature flags found</div>
   } else {
-    return <FlagsList flags={flags} />
+    content = <FlagsList flags={flags} />
   }
+
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      setSearchParams((sp) => {
+        if (patternValue === '') {
+          sp.delete('pattern')
+        } else {
+          sp.set('pattern', patternValue)
+        }
+        return sp
+      })
+      e.stopPropagation()
+    }
+  }
+
+  return (
+    <>
+      <TextInput
+        placeholder="Pattern Search"
+        w="20em"
+        value={patternValue}
+        onChange={(e) => { setPatternValue(e.currentTarget.value) }}
+        onKeyDown={onKeyDown}
+      />
+      {content}
+    </>
+  )
 }
 
 function FlagsList({ flags }: { flags: Flag[] }) {
