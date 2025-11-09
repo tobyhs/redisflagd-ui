@@ -20,5 +20,6 @@ export interface Flag {
     variants: VariantsMap
     defaultVariant: string | null
     targeting?: object
+    metadata?: Record<string, string | number | boolean>
   }
 }
