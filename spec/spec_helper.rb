@@ -1,3 +1,15 @@
+require 'simplecov'
+
+SimpleCov.start do
+  enable_coverage :branch
+  minimum_coverage line: 100, branch: 100
+  track_files 'lib/**/*.rb'
+
+  add_filter do |src|
+    !src.filename.start_with?("#{SimpleCov.root}/lib/")
+  end
+end
+
 ENV['APP_ENV'] = 'test'
 ENV['REDIS_URL'] = ENV['TEST_REDIS_URL']
 
