@@ -1,12 +1,14 @@
 require 'simplecov'
 
-SimpleCov.start do
-  enable_coverage :branch
-  minimum_coverage line: 100, branch: 100
-  track_files 'lib/**/*.rb'
+if ENV['COVERAGE'] || ENV['CI']
+  SimpleCov.start do
+    enable_coverage :branch
+    minimum_coverage line: 100, branch: 100
+    track_files 'lib/**/*.rb'
 
-  add_filter do |src|
-    !src.filename.start_with?("#{SimpleCov.root}/lib/")
+    add_filter do |src|
+      !src.filename.start_with?("#{SimpleCov.root}/lib/")
+    end
   end
 end
 
