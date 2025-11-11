@@ -13,5 +13,16 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['vitest-setup.ts'],
+    coverage: {
+      enabled: Boolean(process.env.CI),
+      provider: 'v8',
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['tests/**', 'src/main.tsx'],
+      clean: true,
+      reportOnFailure: true,
+      thresholds: {
+        100: true,
+      },
+    },
   },
 })
