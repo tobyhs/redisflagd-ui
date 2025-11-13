@@ -1,12 +1,13 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, delay, http } from 'msw'
-import picomatch from 'picomatch'
 import { describe, expect, it } from 'vitest'
 
+import type { Flag } from '../../src/flags/Flag'
 import { server } from '../mock-server'
 import { renderRoute } from '../rendering'
 import { FlagFactory } from './FlagFactory'
+import { mockFlagsApi } from './mockFlagsApi'
 
 describe('FlagsIndexPage', () => {
   it('renders a progress bar when flags are loading', async () => {
@@ -26,25 +27,17 @@ describe('FlagsIndexPage', () => {
   })
 
   it('renders the empty state when there are no flags', async () => {
-    server.use(
-      http.get('/api/flags', () => HttpResponse.json([])),
-    )
+    mockFlagsApi()
     renderRoute('/flags')
     await screen.findByText('No feature flags found')
   })
 
   const stubFlagsApiWithFlags = () => {
-    server.use(
-      http.get('/api/flags', ({ request }) => {
-        const pattern = new URL(request.url).searchParams.get('pattern')
-        let flags = [FlagFactory.booleanFlag(), FlagFactory.stringFlag()]
-        if (pattern) {
-          const isMatch = picomatch(pattern)
-          flags = flags.filter(flag => isMatch(flag.key))
-        }
-        return HttpResponse.json(flags)
-      }),
-    )
+    const flagStore = new Map<string, Flag>()
+    for (const flag of [FlagFactory.booleanFlag(), FlagFactory.stringFlag()]) {
+      flagStore.set(flag.key, flag)
+    }
+    mockFlagsApi(flagStore)
   }
 
   it('renders flags when there are flags', async () => {
