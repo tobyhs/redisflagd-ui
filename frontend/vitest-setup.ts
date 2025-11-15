@@ -3,7 +3,7 @@ import { cleanup } from '@testing-library/react'
 import type { DOMWindow } from 'jsdom'
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 
-import { server } from './tests/mock-server'
+import { server } from './tests/test-helpers/mock-server'
 
 // window mocks from https://mantine.dev/guides/vitest/
 declare const window: DOMWindow

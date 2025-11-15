@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw'
 import picomatch from 'picomatch'
 
 import type { Flag } from '../../src/flags/Flag'
-import { server } from '../mock-server'
+import { server } from '../test-helpers/mock-server'
 
 export function mockFlagsApi(flagStore: Map<string, Flag> = new Map<string, Flag>()) {
   server.use(

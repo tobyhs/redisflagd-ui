@@ -3,8 +3,8 @@ import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 
 import App from '../src/App'
-import { server } from './mock-server'
-import { renderRoute } from './rendering'
+import { server } from './test-helpers/mock-server'
+import { renderRoute } from './test-helpers/rendering'
 
 describe('AppRoutes', () => {
   it('redirects / to /flags', () => {

@@ -2,7 +2,7 @@ import { MantineProvider } from '@mantine/core'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { PropsWithChildren } from 'react'
 
-import { createQueryClient } from './utils'
+import { createQueryClient } from './react-query'
 
 export interface TestProviderProps {
   queryClient?: QueryClient

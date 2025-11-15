@@ -4,8 +4,8 @@ import { HttpResponse, delay, http } from 'msw'
 import { describe, expect, it } from 'vitest'
 
 import type { Flag } from '../../src/flags/Flag'
-import { server } from '../mock-server'
-import { renderRoute } from '../rendering'
+import { server } from '../test-helpers/mock-server'
+import { renderRoute } from '../test-helpers/rendering'
 import { FlagFactory } from './FlagFactory'
 import { mockFlagsApi } from './mockFlagsApi'
 
