@@ -1,7 +1,7 @@
-import { Table, TextInput } from '@mantine/core'
+import { ActionIcon, Group, Table, TextInput, Tooltip } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { type JSX, type KeyboardEvent, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 
 import type { Flag } from './Flag'
 
@@ -51,13 +51,20 @@ export function FlagsIndexPage() {
 
   return (
     <>
-      <TextInput
-        placeholder="Pattern Search"
-        w="20em"
-        value={patternValue}
-        onChange={(e) => { setPatternValue(e.currentTarget.value) }}
-        onKeyDown={onKeyDown}
-      />
+      <Group>
+        <Tooltip label="Create a new flag">
+          <Link to="/flags/new">
+            <ActionIcon aria-label="Create a new flag">+</ActionIcon>
+          </Link>
+        </Tooltip>
+        <TextInput
+          placeholder="Pattern Search"
+          w="20em"
+          value={patternValue}
+          onChange={(e) => { setPatternValue(e.currentTarget.value) }}
+          onKeyDown={onKeyDown}
+        />
+      </Group>
       {content}
     </>
   )

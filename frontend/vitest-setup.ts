@@ -1,3 +1,4 @@
+import { cleanNotifications } from '@mantine/notifications'
 import { cleanup } from '@testing-library/react'
 import type { DOMWindow } from 'jsdom'
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
@@ -35,6 +36,7 @@ beforeAll(() => {
 })
 
 afterEach(() => {
+  cleanNotifications()
   cleanup()
   server.resetHandlers()
 })
