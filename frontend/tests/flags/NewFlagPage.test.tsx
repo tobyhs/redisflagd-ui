@@ -70,7 +70,13 @@ describe('NewFlagPage', () => {
     await submitFlagForm(user)
     await user.click(input)
 
-    await screen.findByText('Invalid JSON object')
+    expect(input.ariaInvalid).toEqual('true')
+    const describedBy = input.getAttribute('aria-describedby')
+    if (!describedBy) {
+      throw new Error('Expected input element to have an aria-describedby attribute')
+    }
+    const describedByElement = document.getElementById(describedBy)
+    expect(describedByElement?.textContent).toEqual('Invalid JSON object')
     checkForNoFlagCreated()
   }
 
@@ -89,10 +95,8 @@ describe('NewFlagPage', () => {
   it('updates defaultVariant when the selected variant is no longer valid', async () => {
     await inputFlag(user, FlagFactory.stringFlag())
     await inputVariants(user, '{"black": "black", "white": "white"}')
-    const defaultVariant: HTMLInputElement | null = document.querySelector(
-      'input[data-path="defaultVariant"]',
-    )
-    expect(defaultVariant?.value).toEqual('')
+    const input = screen.getByLabelText<HTMLInputElement>('Default Variant', { selector: 'input' })
+    expect(input.value).toEqual('')
   })
 
   it('shows an error when the PUT request fails', async () => {
