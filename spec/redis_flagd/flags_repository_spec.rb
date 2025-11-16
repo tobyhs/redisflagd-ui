@@ -59,7 +59,7 @@ RSpec.describe RedisFlagd::FlagsRepository do
 
     context 'when no parameters are given' do
       it 'returns feature flags' do
-        expect(repo.list).to match_array(feature_flags)
+        expect(repo.list).to eq(feature_flags)
       end
     end
 
@@ -71,9 +71,7 @@ RSpec.describe RedisFlagd::FlagsRepository do
 
     context 'when a limit is given' do
       it 'returns feature flags up to the limit' do
-        flags = repo.list(limit: 1)
-        expect(flags.length).to eq(1)
-        expect(feature_flags).to include(flags.first)
+        expect(repo.list(limit: 1)).to eq(feature_flags.first(1))
       end
     end
   end

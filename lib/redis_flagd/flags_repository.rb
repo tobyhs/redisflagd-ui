@@ -18,13 +18,14 @@ module RedisFlagd
     # @param pattern [String, nil]
     #   optional pattern to only return feature flags with matching keys
     # @param limit [Integer] limit of feature flags to return
-    # @return [Array<FeatureFlag>] feature flags that match the given pattern
+    # @return [Array<FeatureFlag>]
+    #   feature flags that match the given pattern ordered by key
     def list(pattern: nil, limit: DEFAULT_LIMIT)
       hash = @redis.hgetall(FLAGS_KEY)
       if pattern
         hash.select! { |key| File.fnmatch?(pattern, key) }
       end
-      hash.first(limit).map do |key, configuration_json|
+      hash.sort.first(limit).map do |key, configuration_json|
         FeatureFlag.new(key:, configuration: JSON.parse(configuration_json))
       end
     end
