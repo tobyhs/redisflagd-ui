@@ -10,7 +10,7 @@ export function NewFlagPage() {
     <div>
       <h2>
         <Link to="/flags">Flags</Link>
-        / Create a new flag
+        &nbsp;/ Create a new flag
       </h2>
       <FlagForm />
     </div>
