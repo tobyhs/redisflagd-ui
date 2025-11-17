@@ -1,3 +1,4 @@
+import { Loader } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import type { JSX } from 'react'
 import { Link, useParams } from 'react-router'
@@ -28,7 +29,7 @@ export function EditFlagPage() {
 
   let content: JSX.Element
   if (isPending) {
-    content = <progress />
+    content = <Loader role="progressbar" />
   } else if (isError) {
     content = <div>An error occurred when fetching the flag</div>
   } else if (flag === null) {

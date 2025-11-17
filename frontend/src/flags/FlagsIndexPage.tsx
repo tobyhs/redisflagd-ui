@@ -1,4 +1,4 @@
-import { ActionIcon, Group, Table, TextInput, Tooltip } from '@mantine/core'
+import { ActionIcon, Group, Loader, Stack, Table, TextInput, Tooltip } from '@mantine/core'
 import { useQuery } from '@tanstack/react-query'
 import { type JSX, type KeyboardEvent, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
@@ -26,7 +26,7 @@ export function FlagsIndexPage() {
 
   let content: JSX.Element
   if (isPending) {
-    content = <progress />
+    content = <Loader role="progressbar" />
   } else if (isError) {
     content = <div>Error: Something went wrong when loading feature flags</div>
   } else if (flags.length === 0) {
@@ -50,7 +50,7 @@ export function FlagsIndexPage() {
   }
 
   return (
-    <>
+    <Stack>
       <Group>
         <Tooltip label="Create a new flag">
           <Link to="/flags/new">
@@ -66,7 +66,7 @@ export function FlagsIndexPage() {
         />
       </Group>
       {content}
-    </>
+    </Stack>
   )
 }
 
