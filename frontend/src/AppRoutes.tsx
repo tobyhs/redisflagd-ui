@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router'
 
 import { AppLayout } from './AppLayout'
+import { EditFlagPage } from './flags/EditFlagPage'
 import { FlagsIndexPage } from './flags/FlagsIndexPage'
 import { NewFlagPage } from './flags/NewFlagPage'
 
@@ -13,6 +14,7 @@ export function AppRoutes() {
         <Route path="flags">
           <Route index element={<FlagsIndexPage />} />
           <Route path="new" element={<NewFlagPage />} />
+          <Route path=":key/edit" element={<EditFlagPage />} />
         </Route>
 
         <Route path="*" element={<div>Page not found</div>} />

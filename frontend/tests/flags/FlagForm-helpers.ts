@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react'
 import type { UserEvent } from '@testing-library/user-event'
 
 import type { Flag } from '../../src/flags/Flag'
+import type { FlagFormValues } from '../../src/flags/FlagForm'
 import { keyboardEscape } from '../test-helpers/testing-library'
 
 async function inputByLabelText(user: UserEvent, labelText: string, value: string) {
@@ -50,4 +51,24 @@ export async function inputFlag(user: UserEvent, flag: Flag) {
 
 export async function submitFlagForm(user: UserEvent) {
   await user.click(await screen.findByRole('button', { name: 'Save' }))
+}
+
+export async function extractFlagFormValues(): Promise<FlagFormValues> {
+  const keyInput = await screen.findByLabelText<HTMLInputElement>('Key *')
+  const stateInput = screen.getByLabelText<HTMLInputElement>('State *', { selector: 'input' })
+  const variantsInput = screen.getByLabelText('Variants *')
+  const defaultVariantInput = screen.getByLabelText<HTMLInputElement>(
+    'Default Variant', { selector: 'input' },
+  )
+  const targetingInput = screen.getByLabelText('Targeting')
+  const metadataInput = screen.getByLabelText('Metadata')
+
+  return {
+    key: keyInput.value,
+    state: stateInput.value as Flag['configuration']['state'],
+    variants: variantsInput.textContent,
+    defaultVariant: defaultVariantInput.value,
+    targeting: targetingInput.textContent,
+    metadata: metadataInput.textContent,
+  }
 }

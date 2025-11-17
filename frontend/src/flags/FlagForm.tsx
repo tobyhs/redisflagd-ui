@@ -18,7 +18,19 @@ const NEW_FLAG_INITIAL_VALUES = {
   metadata: '',
 }
 
-type FlagFormValues = typeof NEW_FLAG_INITIAL_VALUES
+export type FlagFormValues = typeof NEW_FLAG_INITIAL_VALUES
+
+function transformFlagToFormValues(flag: Flag): FlagFormValues {
+  const { state, variants, defaultVariant, targeting, metadata } = flag.configuration
+  return {
+    key: flag.key,
+    state,
+    variants: JSON.stringify(variants, undefined, 2),
+    defaultVariant: defaultVariant ?? '',
+    targeting: targeting ? JSON.stringify(targeting, undefined, 2) : '',
+    metadata: metadata ? JSON.stringify(metadata, undefined, 2) : '',
+  }
+}
 
 function transformFormValuesToFlag({
   key, state, variants, defaultVariant, targeting, metadata,
@@ -55,15 +67,20 @@ const JSON_INPUT_COMMON_PROPS: Partial<JsonInputProps> = {
   formatOnBlur: true,
 }
 
+interface FlagFormProps {
+  /** the flag to edit, or undefined for creating a new flag */
+  flag?: Flag
+}
+
 /**
  * @returns a component with a form to create a flag
  */
-export function FlagForm() {
+export function FlagForm({ flag }: FlagFormProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const form = useForm({
     mode: 'uncontrolled',
-    initialValues: NEW_FLAG_INITIAL_VALUES,
+    initialValues: flag ? transformFlagToFormValues(flag) : NEW_FLAG_INITIAL_VALUES,
     transformValues: transformFormValuesToFlag,
     validateInputOnBlur: true,
     validate: {
@@ -114,6 +131,7 @@ export function FlagForm() {
         {...form.getInputProps('key')}
         label="Key"
         required
+        disabled={Boolean(flag)}
         w="20em"
       />
 
