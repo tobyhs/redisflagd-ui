@@ -1,9 +1,12 @@
-import { screen } from '@testing-library/react'
+import type { QueryClient } from '@tanstack/react-query'
+import { screen, waitFor } from '@testing-library/react'
+import { userEvent, type UserEvent } from '@testing-library/user-event'
 import { delay, http, HttpResponse } from 'msw'
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Flag } from '../../src/flags/Flag'
 import { server } from '../test-helpers/mock-server'
+import { createQueryClient } from '../test-helpers/react-query'
 import { renderRoute } from '../test-helpers/rendering'
 import { FlagFactory } from './FlagFactory'
 import { extractFlagFormValues } from './FlagForm-helpers'
@@ -73,5 +76,60 @@ describe('EditFlagPage', () => {
     expect.soft(formValues.defaultVariant).toEqual('')
     expect.soft(JSON.parse(formValues.targeting)).toEqual(flag.configuration.targeting)
     expect.soft(JSON.parse(formValues.metadata)).toEqual(flag.configuration.metadata)
+  })
+
+  describe('after clicking the Delete button', () => {
+    let flag: Flag
+    let flagStore: Map<string, Flag>
+    let user: UserEvent
+    let queryClient: QueryClient
+
+    beforeEach(async () => {
+      flag = FlagFactory.stringFlag()
+      flagStore = new Map()
+      flagStore.set(flag.key, flag)
+      mockFlagsApi(flagStore)
+      queryClient = createQueryClient()
+
+      user = userEvent.setup()
+      renderRoute(`/flags/${flag.key}/edit`, { testProviderProps: { queryClient } })
+      const deleteButton = await screen.findByRole('button', { name: 'Delete' })
+      await user.click(deleteButton)
+    })
+
+    it('closes the modal after clicking the No button', async () => {
+      const noButton = await screen.findByRole('button', { name: 'No' })
+      await user.click(noButton)
+      await waitFor(() => {
+        expect(screen.queryByText('Are you sure you want to delete this flag?')).toBeNull()
+      })
+    })
+
+    describe('after clicking the Yes button', () => {
+      it('deletes the flag', async () => {
+        const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries')
+        const yesButton = await screen.findByRole('button', { name: 'Yes' })
+        await user.click(yesButton)
+
+        await screen.findByText(`Flag deleted: ${flag.key}`)
+        expect.soft(flagStore.size).toEqual(0)
+        expect.soft(invalidateQueriesSpy).toHaveBeenCalledWith(
+          { queryKey: ['flags', 'get', flag.key] },
+        )
+        expect.soft(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['flags', 'list'] })
+        expect.soft(window.location.pathname).toEqual('/flags')
+      })
+
+      it('shows an error notification if an error occurred', async () => {
+        server.use(
+          http.delete(`/api/flags/${flag.key}`, () => new HttpResponse(null, { status: 500 })),
+        )
+        const yesButton = await screen.findByRole('button', { name: 'Yes' })
+        await user.click(yesButton)
+
+        await screen.findByText('An error occurred when deleting the flag')
+        expect(window.location.pathname).toEqual(`/flags/${flag.key}/edit`)
+      })
+    })
   })
 })
