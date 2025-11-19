@@ -1,0 +1,9 @@
+.bundle
+.git
+.yardoc
+coverage
+doc
+
+frontend/coverage
+frontend/dist
+frontend/node_modules
