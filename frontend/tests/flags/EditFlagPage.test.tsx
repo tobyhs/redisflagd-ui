@@ -113,9 +113,10 @@ describe('EditFlagPage', () => {
 
         await screen.findByText(`Flag deleted: ${flag.key}`)
         expect.soft(flagStore.size).toEqual(0)
-        expect.soft(invalidateQueriesSpy).toHaveBeenCalledWith(
-          { queryKey: ['flags', 'get', flag.key] },
-        )
+        expect.soft(invalidateQueriesSpy).toHaveBeenCalledWith({
+          queryKey: ['flags', 'get', flag.key],
+          refetchType: 'none',
+        })
         expect.soft(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['flags', 'list'] })
         expect.soft(window.location.pathname).toEqual('/flags')
       })

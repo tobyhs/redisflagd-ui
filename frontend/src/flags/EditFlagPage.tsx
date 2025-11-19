@@ -72,7 +72,10 @@ function DeleteButton({ flag }: { flag: Flag }) {
       }
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['flags', 'get', flag.key] })
+      await queryClient.invalidateQueries({
+        queryKey: ['flags', 'get', flag.key],
+        refetchType: 'none',
+      })
       await queryClient.invalidateQueries({ queryKey: ['flags', 'list'] })
       showNotification({ message: `Flag deleted: ${flag.key}` })
       await navigate('/flags')
