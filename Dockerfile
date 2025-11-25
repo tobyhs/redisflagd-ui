@@ -17,7 +17,7 @@ EXPOSE 9292
 ENV APP_ENV production
 
 WORKDIR /app
-RUN bundle config development:test
+RUN bundle config without development:test
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
