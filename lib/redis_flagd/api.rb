@@ -8,6 +8,13 @@ module RedisFlagd
     format :json
     prefix :api
 
+    helpers do
+      # @return [Logger]
+      def logger
+        Api.logger
+      end
+    end
+
     FORM_CONTENT_TYPES = %w[
       application/x-www-form-urlencoded
       multipart/form-data
@@ -57,11 +64,25 @@ module RedisFlagd
         end
       end
       put do
+        previous_flag = ServiceLocator.flags_repository.get(params[:key])
         flag = FeatureFlag.new(
           key: params[:key],
           configuration: params[:configuration]
         )
         ServiceLocator.flags_repository.upsert(flag)
+
+        if previous_flag
+          logger.info(ServiceLocator.flag_change_log_formatter.flag_updated(
+            headers:,
+            flag_key: params[:key],
+            previous_configuration: previous_flag.configuration,
+            new_configuration: flag.configuration,
+          ))
+        else
+          logger.info(ServiceLocator.flag_change_log_formatter.flag_created(
+            headers:, flag:,
+          ))
+        end
         flag.to_h
       end
 
@@ -70,7 +91,12 @@ module RedisFlagd
         requires :key, type: String, desc: 'key of feature flag to delete'
       end
       delete ':key' do
-        unless ServiceLocator.flags_repository.delete(params[:key])
+        if ServiceLocator.flags_repository.delete(params[:key])
+          logger.info(ServiceLocator.flag_change_log_formatter.flag_deleted(
+            headers:, flag_key: params[:key],
+          ))
+          nil
+        else
           error!('Not Found', 404)
         end
       end

@@ -1,5 +1,6 @@
 require 'redis'
 
+require 'redis_flagd/flag_change_log_formatter'
 require 'redis_flagd/flags_repository'
 
 module RedisFlagd
@@ -14,6 +15,11 @@ module RedisFlagd
       # @return [FlagsRepository]
       def flags_repository
         @flags_repository ||= FlagsRepository.new(redis)
+      end
+
+      # @return [FlagChangeLogFormatter]
+      def flag_change_log_formatter
+        @flag_change_log_formatter ||= FlagChangeLogFormatter.new
       end
     end
   end
