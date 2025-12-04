@@ -61,14 +61,13 @@ module RedisFlagd
           requires :variants, type: Hash
           requires :defaultVariant, type: String
           optional :targeting, type: Hash
+          optional :metadata, type: Hash
         end
       end
       put do
         previous_flag = ServiceLocator.flags_repository.get(params[:key])
-        flag = FeatureFlag.new(
-          key: params[:key],
-          configuration: params[:configuration]
-        )
+        configuration = declared(params, include_missing: false)[:configuration]
+        flag = FeatureFlag.new(key: params[:key], configuration:)
         ServiceLocator.flags_repository.upsert(flag)
 
         if previous_flag

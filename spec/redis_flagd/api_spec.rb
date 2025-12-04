@@ -29,6 +29,7 @@ RSpec.describe RedisFlagd::Api do
         'state' => 'ENABLED',
         'variants' => {'foo' => 'foo', 'bar' => 'bar'},
         'defaultVariant' => 'foo',
+        'metadata' => {'team' => 'infra'},
       }
     )
   end
