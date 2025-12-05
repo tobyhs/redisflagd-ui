@@ -13,15 +13,17 @@ module RedisFlagd
 
       @created_template = hbs.compile(
         ENV['LOG_TEMPLATE_FLAG_CREATED'] ||
-          'Flag created: {{json_stringify flag}}'
+          'Flag created: {{json_stringify flag}}',
       )
       @updated_template = hbs.compile(
         ENV['LOG_TEMPLATE_FLAG_UPDATED'] ||
-          'Flag updated: {{flag_key}}: previous: {{json_stringify previous_configuration}}, new: {{json_stringify new_configuration}}'
+          <<~TEMPLATE,
+            Flag updated: {{flag_key}}: previous: {{json_stringify previous_configuration}}, new: {{json_stringify new_configuration}}
+          TEMPLATE
       )
       @deleted_template = hbs.compile(
         ENV['LOG_TEMPLATE_FLAG_DELETED'] ||
-          'Flag deleted: {{flag_key}}'
+          'Flag deleted: {{flag_key}}',
       )
     end
 
@@ -29,7 +31,7 @@ module RedisFlagd
     # @param flag [FeatureFlag] flag that was created
     # @return [String] log message for when a flag is created
     def flag_created(headers:, flag:)
-      @created_template.call({headers:, flag: flag.to_h})
+      @created_template.call({ headers:, flag: flag.to_h })
     end
 
     # @param headers [Rack::Headers] request headers
@@ -55,7 +57,7 @@ module RedisFlagd
     # @param flag_key [String] key of flag that was deleted
     # @return [String] log message for when a flag is deleted
     def flag_deleted(headers:, flag_key:)
-      @deleted_template.call({headers:, flag_key:})
+      @deleted_template.call({ headers:, flag_key: })
     end
   end
 end

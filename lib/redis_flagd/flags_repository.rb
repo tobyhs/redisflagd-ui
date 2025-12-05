@@ -5,7 +5,7 @@ require 'redis_flagd/feature_flag'
 module RedisFlagd
   # A repository to manage RedisFlagd feature flags
   class FlagsRepository
-    FLAGS_KEY = 'flagd:flags'
+    FLAGS_KEY = 'flagd:flags'.freeze
     DEFAULT_LIMIT = 50
 
     # @param redis [Redis] Redis client
@@ -57,7 +57,7 @@ module RedisFlagd
     # @param key [String] key of feature flag to delete
     # @return [Boolean]
     #   true if the flag was deleted or false if the flag did not exist
-    def delete(key)
+    def delete(key) # rubocop:disable Naming/PredicateMethod
       @redis.hdel(FLAGS_KEY, key) == 1
     end
   end

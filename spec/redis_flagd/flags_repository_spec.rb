@@ -13,9 +13,9 @@ RSpec.describe RedisFlagd::FlagsRepository do
       key: 'boolean_flag',
       configuration: {
         'state' => 'ENABLED',
-        'variants' => {'on' => true, 'off' => false},
+        'variants' => { 'on' => true, 'off' => false },
         'defaultVariant' => 'on',
-      }
+      },
     )
   end
 
@@ -24,9 +24,9 @@ RSpec.describe RedisFlagd::FlagsRepository do
       key: 'string_flag',
       configuration: {
         'state' => 'ENABLED',
-        'variants' => {'foo' => 'foo', 'bar' => 'bar'},
+        'variants' => { 'foo' => 'foo', 'bar' => 'bar' },
         'defaultVariant' => 'foo',
-      }
+      },
     )
   end
 
@@ -107,7 +107,7 @@ RSpec.describe RedisFlagd::FlagsRepository do
       it 'updates the flag' do
         updated_configuration = {
           'state' => 'ENABLED',
-          'variants' => {'on' => true, 'off' => false},
+          'variants' => { 'on' => true, 'off' => false },
           'defaultVariant' => 'off',
         }
         updated_flag = RedisFlagd::FeatureFlag.new(
@@ -134,8 +134,8 @@ RSpec.describe RedisFlagd::FlagsRepository do
 
       it 'deletes the flag and returns true' do
         expect(repo.delete(boolean_flag.key)).to eq(true)
-        expect(redis.hexists(described_class::FLAGS_KEY, boolean_flag.key)).
-          to eq(false)
+        expect(redis.hexists(described_class::FLAGS_KEY, boolean_flag.key))
+          .to eq(false)
       end
     end
   end

@@ -6,10 +6,10 @@ RSpec.describe RedisFlagd::FeatureFlag do
       key: 'test_flag',
       configuration: {
         'state' => 'ENABLED',
-        'variants' => {'foo' => 'foo', 'bar' => 'bar'},
+        'variants' => { 'foo' => 'foo', 'bar' => 'bar' },
         'defaultVariant' => 'foo',
-        'targeting' => {'fractional' => [['foo', 50], ['bar', 50]]},
-        'metadata' => {'team' => 'infra'},
+        'targeting' => { 'fractional' => [['foo', 50], ['bar', 50]] },
+        'metadata' => { 'team' => 'infra' },
       },
     )
   end
@@ -19,10 +19,10 @@ RSpec.describe RedisFlagd::FeatureFlag do
       expect(flag.to_h).to eq({
         'key' => 'test_flag',
         'state' => 'ENABLED',
-        'variants' => {'foo' => 'foo', 'bar' => 'bar'},
+        'variants' => { 'foo' => 'foo', 'bar' => 'bar' },
         'defaultVariant' => 'foo',
-        'targeting' => {'fractional' => [['foo', 50], ['bar', 50]]},
-        'metadata' => {'team' => 'infra'},
+        'targeting' => { 'fractional' => [['foo', 50], ['bar', 50]] },
+        'metadata' => { 'team' => 'infra' },
       })
     end
   end
