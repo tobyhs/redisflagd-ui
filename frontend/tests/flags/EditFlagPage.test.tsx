@@ -46,9 +46,9 @@ describe('EditFlagPage', () => {
     expect.soft(keyInput.disabled).toEqual(true)
     const formValues = await extractFlagFormValues()
     expect.soft(formValues.key).toEqual(flag.key)
-    expect.soft(formValues.state).toEqual(flag.configuration.state)
-    expect.soft(JSON.parse(formValues.variants)).toEqual(flag.configuration.variants)
-    expect.soft(formValues.defaultVariant).toEqual(flag.configuration.defaultVariant)
+    expect.soft(formValues.state).toEqual(flag.state)
+    expect.soft(JSON.parse(formValues.variants)).toEqual(flag.variants)
+    expect.soft(formValues.defaultVariant).toEqual(flag.defaultVariant)
     expect.soft(formValues.targeting).toEqual('')
     expect.soft(formValues.metadata).toEqual('')
   })
@@ -56,13 +56,11 @@ describe('EditFlagPage', () => {
   it('renders a form to edit a flag (with optional fields present)', async () => {
     const flag: Flag = {
       key: 'testing',
-      configuration: {
-        state: 'DISABLED',
-        variants: { one: 1, two: 2 },
-        defaultVariant: null,
-        targeting: { fractional: [['one', 50], ['two', 50]] },
-        metadata: { team: 'test' },
-      },
+      state: 'DISABLED',
+      variants: { one: 1, two: 2 },
+      defaultVariant: null,
+      targeting: { fractional: [['one', 50], ['two', 50]] },
+      metadata: { team: 'test' },
     }
     server.use(
       http.get(`/api/flags/${flag.key}`, () => HttpResponse.json(flag)),
@@ -71,11 +69,11 @@ describe('EditFlagPage', () => {
 
     const formValues = await extractFlagFormValues()
     expect.soft(formValues.key).toEqual(flag.key)
-    expect.soft(formValues.state).toEqual(flag.configuration.state)
-    expect.soft(JSON.parse(formValues.variants)).toEqual(flag.configuration.variants)
+    expect.soft(formValues.state).toEqual(flag.state)
+    expect.soft(JSON.parse(formValues.variants)).toEqual(flag.variants)
     expect.soft(formValues.defaultVariant).toEqual('')
-    expect.soft(JSON.parse(formValues.targeting)).toEqual(flag.configuration.targeting)
-    expect.soft(JSON.parse(formValues.metadata)).toEqual(flag.configuration.metadata)
+    expect.soft(JSON.parse(formValues.targeting)).toEqual(flag.targeting)
+    expect.soft(JSON.parse(formValues.metadata)).toEqual(flag.metadata)
   })
 
   describe('after clicking the Delete button', () => {

@@ -17,7 +17,7 @@ export async function inputKey(user: UserEvent, key: string) {
   await inputByLabelText(user, 'Key *', key)
 }
 
-export async function selectState(user: UserEvent, state: Flag['configuration']['state']) {
+export async function selectState(user: UserEvent, state: Flag['state']) {
   await user.click(await screen.findByRole('textbox', { name: 'State' }))
   await user.click(await screen.findByRole('option', { name: state }))
 }
@@ -41,10 +41,10 @@ export async function inputMetadata(user: UserEvent, metadata: string) {
 
 export async function inputFlag(user: UserEvent, flag: Flag) {
   await inputKey(user, flag.key)
-  await selectState(user, flag.configuration.state)
-  await inputVariants(user, JSON.stringify(flag.configuration.variants))
-  await selectDefaultVariant(user, flag.configuration.defaultVariant)
-  const { metadata, targeting } = flag.configuration
+  await selectState(user, flag.state)
+  await inputVariants(user, JSON.stringify(flag.variants))
+  await selectDefaultVariant(user, flag.defaultVariant)
+  const { metadata, targeting } = flag
   await inputTargeting(user, targeting ? JSON.stringify(targeting) : '')
   await inputMetadata(user, metadata ? JSON.stringify(metadata) : '')
 }
@@ -65,7 +65,7 @@ export async function extractFlagFormValues(): Promise<FlagFormValues> {
 
   return {
     key: keyInput.value,
-    state: stateInput.value as Flag['configuration']['state'],
+    state: stateInput.value as Flag['state'],
     variants: variantsInput.textContent,
     defaultVariant: defaultVariantInput.value,
     targeting: targetingInput.textContent,

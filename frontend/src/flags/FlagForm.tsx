@@ -7,11 +7,9 @@ import { useNavigate } from 'react-router'
 
 import type { Flag } from './Flag'
 
-type FlagConfig = Flag['configuration']
-
 const NEW_FLAG_INITIAL_VALUES = {
   key: '',
-  state: 'ENABLED' as FlagConfig['state'],
+  state: 'ENABLED' as Flag['state'],
   variants: '{}',
   defaultVariant: '',
   targeting: '',
@@ -21,9 +19,9 @@ const NEW_FLAG_INITIAL_VALUES = {
 export type FlagFormValues = typeof NEW_FLAG_INITIAL_VALUES
 
 function transformFlagToFormValues(flag: Flag): FlagFormValues {
-  const { state, variants, defaultVariant, targeting, metadata } = flag.configuration
+  const { key, state, variants, defaultVariant, targeting, metadata } = flag
   return {
-    key: flag.key,
+    key,
     state,
     variants: JSON.stringify(variants, undefined, 2),
     defaultVariant: defaultVariant ?? '',
@@ -37,13 +35,11 @@ function transformFormValuesToFlag({
 }: FlagFormValues): Flag {
   return {
     key,
-    configuration: {
-      state,
-      variants: JSON.parse(variants) as FlagConfig['variants'],
-      defaultVariant: defaultVariant === '' ? null : defaultVariant,
-      ...(targeting !== '' && { targeting: JSON.parse(targeting) as FlagConfig['targeting'] }),
-      ...(metadata !== '' && { metadata: JSON.parse(metadata) as FlagConfig['metadata'] }),
-    },
+    state,
+    variants: JSON.parse(variants) as Flag['variants'],
+    defaultVariant: defaultVariant === '' ? null : defaultVariant,
+    ...(targeting !== '' && { targeting: JSON.parse(targeting) as Flag['targeting'] }),
+    ...(metadata !== '' && { metadata: JSON.parse(metadata) as Flag['metadata'] }),
   }
 }
 
@@ -56,7 +52,7 @@ function isJsonObject(value: string): boolean {
 }
 
 function deriveVariantChoices(serializedVariants: string): string[] {
-  const keys = Object.keys(JSON.parse(serializedVariants) as FlagConfig['variants'])
+  const keys = Object.keys(JSON.parse(serializedVariants) as Flag['variants'])
   return [''].concat(keys.filter(key => key !== ''))
 }
 

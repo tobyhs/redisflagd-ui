@@ -46,12 +46,12 @@ describe('NewFlagPage', () => {
 
   it('saves flags with optional fields filled out', async () => {
     const flag = FlagFactory.booleanFlag()
-    flag.configuration.state = 'DISABLED'
-    flag.configuration.defaultVariant = null
-    flag.configuration.targeting = {
+    flag.state = 'DISABLED'
+    flag.defaultVariant = null
+    flag.targeting = {
       if: [{ endsWith: [{ var: 'email' }, '@example.com'] }, 'off'],
     }
-    flag.configuration.metadata = { team: 'platform' }
+    flag.metadata = { team: 'platform' }
     await inputFlag(user, flag)
     await submitFlagForm(user)
     expect([...flagStore.values()]).toEqual([flag])

@@ -32,7 +32,7 @@ RSpec.describe RedisFlagd::FlagChangeLogFormatter do
   describe '#flag_created' do
     it 'returns a log message' do
       expect(formatter.flag_created(headers:, flag:)).to eq(
-        'Flag created: {"key":"test_flag","configuration":{"state":"ENABLED","variants":{"on":true,"off":false},"defaultVariant":"on"}}'
+        'Flag created: {"key":"test_flag","state":"ENABLED","variants":{"on":true,"off":false},"defaultVariant":"on"}'
       )
     end
 

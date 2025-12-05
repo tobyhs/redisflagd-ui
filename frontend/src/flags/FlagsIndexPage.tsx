@@ -86,8 +86,8 @@ function FlagsList({ flags }: { flags: Flag[] }) {
             <Table.Td>
               <Link to={`/flags/${encodeURIComponent(flag.key)}/edit`}>{flag.key}</Link>
             </Table.Td>
-            <Table.Td>{flag.configuration.state}</Table.Td>
-            <Table.Td>{flag.configuration.defaultVariant}</Table.Td>
+            <Table.Td>{flag.state}</Table.Td>
+            <Table.Td>{flag.defaultVariant}</Table.Td>
           </Table.Tr>
         ))}
       </Table.Tbody>

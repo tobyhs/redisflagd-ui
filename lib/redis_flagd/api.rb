@@ -56,17 +56,15 @@ module RedisFlagd
       desc 'Upserts a feature flag'
       params do
         requires :key, type: String, desc: 'key of feature flag'
-        requires :configuration, type: Hash do
-          requires :state, type: String, values: %w[ENABLED DISABLED]
-          requires :variants, type: Hash
-          requires :defaultVariant, type: String
-          optional :targeting, type: Hash
-          optional :metadata, type: Hash
-        end
+        requires :state, type: String, values: %w[ENABLED DISABLED]
+        requires :variants, type: Hash
+        requires :defaultVariant, type: String
+        optional :targeting, type: Hash
+        optional :metadata, type: Hash
       end
       put do
         previous_flag = ServiceLocator.flags_repository.get(params[:key])
-        configuration = declared(params, include_missing: false)[:configuration]
+        configuration = declared(params, include_missing: false).except(:key)
         flag = FeatureFlag.new(key: params[:key], configuration:)
         ServiceLocator.flags_repository.upsert(flag)
 
