@@ -4,17 +4,6 @@ require 'redis_flagd/feature_flag'
 require 'redis_flagd/flag_change_log_formatter'
 
 RSpec.describe RedisFlagd::FlagChangeLogFormatter do
-  before do
-    %w[
-      LOG_TEMPLATE_FLAG_CREATED
-      LOG_TEMPLATE_FLAG_UPDATED
-      LOG_TEMPLATE_FLAG_DELETED
-    ].each do |key|
-      ENV.delete(key)
-    end
-    allow(ENV).to receive(:[]).and_call_original
-  end
-
   subject(:formatter) { described_class.new }
 
   let(:headers) { Rack::Headers['X-Auth-Request-Email', 'john@example.com'] }
@@ -27,6 +16,17 @@ RSpec.describe RedisFlagd::FlagChangeLogFormatter do
         'defaultVariant' => 'on',
       },
     )
+  end
+
+  before do
+    %w[
+      LOG_TEMPLATE_FLAG_CREATED
+      LOG_TEMPLATE_FLAG_UPDATED
+      LOG_TEMPLATE_FLAG_DELETED
+    ].each do |key|
+      ENV.delete(key)
+    end
+    allow(ENV).to receive(:[]).and_call_original
   end
 
   describe '#flag_created' do

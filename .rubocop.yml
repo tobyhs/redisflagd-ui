@@ -1,3 +1,6 @@
+plugins:
+  - rubocop-rspec
+
 AllCops:
   NewCops: enable
 
@@ -14,6 +17,21 @@ Metrics/BlockLength:
   Enabled: false
 
 Metrics/MethodLength:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/StubbedMock:
   Enabled: false
 
 Style/FrozenStringLiteralComment:

@@ -79,7 +79,7 @@ RSpec.describe RedisFlagd::FlagsRepository do
   describe '#get' do
     context 'when the flag does not exist' do
       it 'returns nil' do
-        expect(repo.get('none')).to eq(nil)
+        expect(repo.get('none')).to be_nil
       end
     end
 
@@ -125,7 +125,7 @@ RSpec.describe RedisFlagd::FlagsRepository do
   describe '#delete' do
     context 'when the flag does not exist' do
       it 'returns false' do
-        expect(repo.delete('none')).to eq(false)
+        expect(repo.delete('none')).to be(false)
       end
     end
 
@@ -133,9 +133,9 @@ RSpec.describe RedisFlagd::FlagsRepository do
       include_context 'when the flag exists'
 
       it 'deletes the flag and returns true' do
-        expect(repo.delete(boolean_flag.key)).to eq(true)
+        expect(repo.delete(boolean_flag.key)).to be(true)
         expect(redis.hexists(described_class::FLAGS_KEY, boolean_flag.key))
-          .to eq(false)
+          .to be(false)
       end
     end
   end

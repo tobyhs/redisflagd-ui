@@ -2,7 +2,7 @@ require 'redis_flagd/feature_flag'
 
 RSpec.describe RedisFlagd::FeatureFlag do
   subject(:flag) do
-    RedisFlagd::FeatureFlag.new(
+    described_class.new(
       key: 'test_flag',
       configuration: {
         'state' => 'ENABLED',

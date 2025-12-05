@@ -39,15 +39,12 @@ RSpec.describe RedisFlagd::Api do
     instance_double(RedisFlagd::FlagChangeLogFormatter)
   end
 
-  before :all do
-    described_class.logger(Logger.new(nil))
-  end
-
   before do
-    allow(RedisFlagd::ServiceLocator).to receive(:flags_repository)
-      .and_return(flags_repository)
-    allow(RedisFlagd::ServiceLocator).to receive(:flag_change_log_formatter)
-      .and_return(flag_change_log_formatter)
+    described_class.logger(Logger.new(nil))
+    allow(RedisFlagd::ServiceLocator).to receive_messages(
+      flags_repository:,
+      flag_change_log_formatter:,
+    )
   end
 
   it 'blocks CSRF attempts' do
@@ -105,9 +102,9 @@ RSpec.describe RedisFlagd::Api do
   end
 
   describe 'PUT /api/flags' do
-    shared_examples 'upserts the flag' do
+    shared_examples 'a flag upsert endpoint' do
       it 'upserts the flag' do
-        expect(RedisFlagd::Api.logger).to receive(:info)
+        expect(described_class.logger).to receive(:info)
           .with(expected_log_message)
         expect(flags_repository).to receive(:upsert).with(string_flag)
         put(
@@ -131,7 +128,7 @@ RSpec.describe RedisFlagd::Api do
           .and_return(expected_log_message)
       end
 
-      include_examples 'upserts the flag'
+      it_behaves_like 'a flag upsert endpoint'
     end
 
     context 'when the flag exists' do
@@ -148,7 +145,7 @@ RSpec.describe RedisFlagd::Api do
         ).and_return(expected_log_message)
       end
 
-      include_examples 'upserts the flag'
+      it_behaves_like 'a flag upsert endpoint'
     end
   end
 
@@ -156,17 +153,15 @@ RSpec.describe RedisFlagd::Api do
     let(:key) { 'flag-to-delete' }
 
     before do
-      expect(flags_repository).to receive(:delete).with(key)
-        .and_return(flag_exists)
       allow(flag_change_log_formatter).to receive(:flag_deleted)
         .with(headers: expected_request_headers, flag_key: key)
         .and_return('Flag deleted')
     end
 
     context 'when the flag does not exist' do
-      let(:flag_exists) { false }
-
       it 'returns a 404' do
+        expect(flags_repository).to receive(:delete).with(key)
+          .and_return(false)
         delete "/api/flags/#{key}", {}, { 'CONTENT_TYPE' => '' }
         expect(last_response.status).to eq(404)
         expect(json_response).to eq({ 'error' => 'Not Found' })
@@ -174,10 +169,10 @@ RSpec.describe RedisFlagd::Api do
     end
 
     context 'when the flag exists' do
-      let(:flag_exists) { true }
-
       it 'deletes the flag and returns a 204' do
-        expect(RedisFlagd::Api.logger).to receive(:info).with('Flag deleted')
+        expect(flags_repository).to receive(:delete).with(key)
+          .and_return(true)
+        expect(described_class.logger).to receive(:info).with('Flag deleted')
         delete "/api/flags/#{key}", {}, { 'CONTENT_TYPE' => '' }
         expect(last_response.status).to eq(204)
       end

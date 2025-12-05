@@ -121,6 +121,9 @@ GEM
     rubocop-ast (1.48.0)
       parser (>= 3.3.7.2)
       prism (~> 1.4)
+    rubocop-rspec (3.8.0)
+      lint_roller (~> 1.1)
+      rubocop (~> 1.81)
     ruby-handlebars (0.4.1)
       parslet (~> 1.6, >= 1.6.2)
     ruby-progressbar (1.13.0)
@@ -155,6 +158,7 @@ DEPENDENCIES
   redis (~> 5.4)
   rspec (~> 3.13)
   rubocop (~> 1.81)
+  rubocop-rspec (~> 3.8)
   ruby-handlebars (~> 0.4)
   simplecov (~> 0.22)
   yard
