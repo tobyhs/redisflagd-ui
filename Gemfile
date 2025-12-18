@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-gem 'grape', '~> 2.4'
+gem 'grape', '~> 3.0'
 gem 'puma', '~> 7.1'
 gem 'redis', '~> 5.4'
 gem 'ruby-handlebars', '~> 0.4'
