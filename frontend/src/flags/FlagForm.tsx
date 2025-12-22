@@ -2,9 +2,10 @@ import { Button, JsonInput, type JsonInputProps, Select, TextInput } from '@mant
 import { useForm } from '@mantine/form'
 import { showNotification } from '@mantine/notifications'
 import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { Fragment, type ReactNode, useState } from 'react'
 import { useNavigate } from 'react-router'
 
+import type { ValidationErrorBody } from '../api/errors'
 import type { Flag } from './Flag'
 
 const NEW_FLAG_INITIAL_VALUES = {
@@ -109,15 +110,27 @@ export function FlagForm({ flag }: FlagFormProps) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(flag),
     })
-    if (!response.ok) {
-      showNotification({ color: 'red', message: 'An error occurred when saving the flag' })
-      return
-    }
 
-    await queryClient.invalidateQueries({ queryKey: ['flags', 'get', flag.key] })
-    await queryClient.invalidateQueries({ queryKey: ['flags', 'list'] })
-    showNotification({ message: `Flag saved: ${flag.key}` })
-    await navigate('/flags')
+    if (response.status === 422) {
+      const responseBody = await response.json() as ValidationErrorBody<Flag>
+      const errors: Record<string, ReactNode[]> = {}
+      for (const [field, validationErrors] of Object.entries(responseBody.errors)) {
+        errors[field] = validationErrors.map(e => (
+          <Fragment key={e.message}>
+            {e.message}
+            <br />
+          </Fragment>
+        ))
+      }
+      form.setErrors(errors)
+    } else if (!response.ok) {
+      showNotification({ color: 'red', message: 'An error occurred when saving the flag' })
+    } else {
+      await queryClient.invalidateQueries({ queryKey: ['flags', 'get', flag.key] })
+      await queryClient.invalidateQueries({ queryKey: ['flags', 'list'] })
+      showNotification({ message: `Flag saved: ${flag.key}` })
+      await navigate('/flags')
+    }
   }
 
   return (

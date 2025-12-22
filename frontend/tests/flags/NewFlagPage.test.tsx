@@ -4,7 +4,9 @@ import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import type { ValidationErrorBody } from '../../src/api/errors'
 import type { Flag } from '../../src/flags/Flag'
+import { findErrorElementFromFormInput } from '../test-helpers/form-helpers'
 import { server } from '../test-helpers/mock-server'
 import { createQueryClient } from '../test-helpers/react-query'
 import { renderRoute } from '../test-helpers/rendering'
@@ -97,6 +99,36 @@ describe('NewFlagPage', () => {
     await inputVariants(user, '{"black": "black", "white": "white"}')
     const input = screen.getByLabelText<HTMLInputElement>('Default Variant', { selector: 'input' })
     expect(input.value).toEqual('')
+  })
+
+  it('shows errors when there are backend validation errors', async () => {
+    server.use(
+      http.put('/api/flags', () => HttpResponse.json({
+        errors: {
+          key: [{ message: 'Key is not valid.' }],
+          state: [{ message: 'State is not valid.' }],
+          variants: [{ message: 'Variants is not valid.' }, { message: 'Other error.' }],
+          defaultVariant: [{ message: 'defaultVariant is not valid.' }],
+          targeting: [{ message: 'Targeting is not valid.' }],
+          metadata: [{ message: 'Metadata is not valid.' }],
+        },
+      } satisfies ValidationErrorBody<Flag>, { status: 422 })),
+    )
+    await inputFlag(user, FlagFactory.booleanFlag())
+    await submitFlagForm(user)
+
+    const expected: [HTMLElement, string][] = [
+      [screen.getByLabelText('Key *'), 'Key is not valid.'],
+      [screen.getByRole('textbox', { name: 'State' }), 'State is not valid.'],
+      [screen.getByLabelText('Variants *'), 'Variants is not valid.<br>Other error.'],
+      [screen.getByRole('textbox', { name: 'Default Variant' }), 'defaultVariant is not valid.'],
+      [screen.getByLabelText('Targeting'), 'Targeting is not valid.'],
+      [screen.getByLabelText('Metadata'), 'Metadata is not valid.'],
+    ]
+    for (const [input, expectedErrorText] of expected) {
+      const errorElement = findErrorElementFromFormInput(input)
+      expect.soft(errorElement.innerHTML).toEqual(`${expectedErrorText}<br>`)
+    }
   })
 
   it('shows an error when the PUT request fails', async () => {
