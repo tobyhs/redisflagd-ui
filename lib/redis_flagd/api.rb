@@ -72,15 +72,15 @@ module RedisFlagd
         ServiceLocator.flags_repository.upsert(flag)
 
         if previous_flag
-          logger.info(ServiceLocator.flag_change_log_formatter.flag_updated(
+          logger.info(ServiceLocator.resource_change_log_formatter.resource_updated(
             headers:,
-            flag_key: params[:key],
-            previous_configuration: previous_flag.configuration,
-            new_configuration: flag.configuration,
+            type: 'Flag',
+            previous_resource: previous_flag,
+            new_resource: flag,
           ))
         else
-          logger.info(ServiceLocator.flag_change_log_formatter.flag_created(
-            headers:, flag:,
+          logger.info(ServiceLocator.resource_change_log_formatter.resource_created(
+            headers:, type: 'Flag', resource: flag,
           ))
         end
         flag.to_h
@@ -92,8 +92,8 @@ module RedisFlagd
       end
       delete ':key' do
         if ServiceLocator.flags_repository.delete(params[:key])
-          logger.info(ServiceLocator.flag_change_log_formatter.flag_deleted(
-            headers:, flag_key: params[:key],
+          logger.info(ServiceLocator.resource_change_log_formatter.resource_deleted(
+            headers:, type: 'Flag', key: params[:key],
           ))
           nil
         else

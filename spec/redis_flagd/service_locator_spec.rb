@@ -28,10 +28,10 @@ RSpec.describe RedisFlagd::ServiceLocator do
     end
   end
 
-  describe '.flag_change_log_formatter' do
-    it 'returns a FlagChangeLogFormatter' do
-      expect(described_class.flag_change_log_formatter)
-        .to be_a(RedisFlagd::FlagChangeLogFormatter)
+  describe '.resource_change_log_formatter' do
+    it 'returns a ResourceChangeLogFormatter' do
+      expect(described_class.resource_change_log_formatter)
+        .to be_a(RedisFlagd::ResourceChangeLogFormatter)
     end
   end
 end

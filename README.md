@@ -9,9 +9,9 @@ RedisFlagd UI can be configured with the following environment variables:
 | Environment Variable | Description |
 | --- | --- |
 | `REDIS_URL` | URL of Redis server with your flag configurations, e.g. `redis://flagd-redis.production:6379` |
-| `LOG_TEMPLATE_FLAG_CREATED` | Handlebars template for the message logged when a flag is created. Available variables are `headers` (request headers) and `flag` (the flag that was created) |
-| `LOG_TEMPLATE_FLAG_UPDATED` | Handlebars template for the message logged when a flag is updated. Available variables are `headers` (request headers), `flag_key` (key of updated flag), `previous_configuration`, and `new_configuration` |
-| `LOG_TEMPLATE_FLAG_DELETED` | Handlebars template for the message logged when a flag is deleted. Available variables are `headers` (request headers) and `flag_key` (key of deleted flag) |
+| `LOG_TEMPLATE_RESOURCE_CREATED` | Handlebars template for the message logged when a resource is created. Available variables are `headers` (request headers), `type` (type of resource), and `resource` (the resource that was created). |
+| `LOG_TEMPLATE_RESOURCE_UPDATED` | Handlebars template for the message logged when a resource is updated. Available variables are `headers` (request headers), `type` (type of resource), `previous_resource`, and `new_resource`. |
+| `LOG_TEMPLATE_RESOURCE_DELETED` | Handlebars template for the message logged when a resource is deleted. Available variables are `headers` (request headers), `type` (type of resource), and `key` (key of deleted resource) |
 
 Handlebars templates have a `json_stringify` helper to serialize JSON objects.
 

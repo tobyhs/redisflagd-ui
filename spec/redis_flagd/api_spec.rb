@@ -35,15 +35,15 @@ RSpec.describe RedisFlagd::Api do
   end
 
   let(:flags_repository) { instance_double(RedisFlagd::FlagsRepository) }
-  let(:flag_change_log_formatter) do
-    instance_double(RedisFlagd::FlagChangeLogFormatter)
+  let(:resource_change_log_formatter) do
+    instance_double(RedisFlagd::ResourceChangeLogFormatter)
   end
 
   before do
     described_class.logger(Logger.new(nil))
     allow(RedisFlagd::ServiceLocator).to receive_messages(
       flags_repository:,
-      flag_change_log_formatter:,
+      resource_change_log_formatter:,
     )
   end
 
@@ -123,8 +123,8 @@ RSpec.describe RedisFlagd::Api do
       before do
         allow(flags_repository).to receive(:get).with(string_flag.key)
           .and_return(nil)
-        allow(flag_change_log_formatter).to receive(:flag_created)
-          .with(headers: expected_request_headers, flag: string_flag)
+        allow(resource_change_log_formatter).to receive(:resource_created)
+          .with(headers: expected_request_headers, type: 'Flag', resource: string_flag)
           .and_return(expected_log_message)
       end
 
@@ -137,11 +137,11 @@ RSpec.describe RedisFlagd::Api do
       before do
         allow(flags_repository).to receive(:get).with(string_flag.key)
           .and_return(string_flag)
-        allow(flag_change_log_formatter).to receive(:flag_updated).with(
+        allow(resource_change_log_formatter).to receive(:resource_updated).with(
           headers: expected_request_headers,
-          flag_key: string_flag.key,
-          previous_configuration: string_flag.configuration,
-          new_configuration: string_flag.configuration,
+          type: 'Flag',
+          previous_resource: string_flag,
+          new_resource: string_flag,
         ).and_return(expected_log_message)
       end
 
@@ -153,8 +153,8 @@ RSpec.describe RedisFlagd::Api do
     let(:key) { 'flag-to-delete' }
 
     before do
-      allow(flag_change_log_formatter).to receive(:flag_deleted)
-        .with(headers: expected_request_headers, flag_key: key)
+      allow(resource_change_log_formatter).to receive(:resource_deleted)
+        .with(headers: expected_request_headers, type: 'Flag', key:)
         .and_return('Flag deleted')
     end
 
