@@ -19,6 +19,8 @@ jobs:
           - 6379:6379
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: true
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true

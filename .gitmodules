@@ -1,0 +1,4 @@
+[submodule "flagd-schemas"]
+	path = flagd-schemas
+	url = https://github.com/open-feature/flagd-schemas.git
+	branch = json/json-schema-v0.2.13
