@@ -18,8 +18,8 @@ ENV APP_ENV production
 WORKDIR /app
 RUN bundle config without development:test
 COPY Gemfile Gemfile.lock ./
-ENV BUILD_DEPS build-base yaml-dev
-RUN apk add --no-cache $BUILD_DEPS && \
+RUN BUILD_DEPS='build-base yaml-dev' && \
+  apk add --no-cache $BUILD_DEPS && \
   bundle install && \
   apk del -r $BUILD_DEPS
 
