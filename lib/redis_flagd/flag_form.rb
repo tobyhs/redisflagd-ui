@@ -64,7 +64,7 @@ module RedisFlagd
           defaultVariant:,
           targeting:,
           metadata:,
-        }.compact,
+        }.compact.transform_keys(&:to_s),
       )
       ServiceLocator.flags_repository.upsert(flag)
       @flag = flag

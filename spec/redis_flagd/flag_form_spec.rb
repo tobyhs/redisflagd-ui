@@ -26,7 +26,7 @@ RSpec.describe RedisFlagd::FlagForm do
         it 'saves the flag and returns true' do
           expected_flag = RedisFlagd::FeatureFlag.new(
             key: attributes[:key],
-            configuration: attributes.except(:key),
+            configuration: attributes.except(:key).transform_keys(&:to_s),
           )
           expect(flags_repository).to receive(:upsert).with(expected_flag)
           expect(form.save).to be(true)
