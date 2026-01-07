@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'activemodel', '~> 8.1'
 gem 'grape', '~> 3.0'
 gem 'json_schemer', '~> 2.5'
 gem 'puma', '~> 7.1'

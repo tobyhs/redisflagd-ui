@@ -1,6 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    activemodel (8.1.1)
+      activesupport (= 8.1.1)
     activesupport (8.1.1)
       base64
       bigdecimal
@@ -162,6 +164,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activemodel (~> 8.1)
   grape (~> 3.0)
   irb
   json_schemer (~> 2.5)
