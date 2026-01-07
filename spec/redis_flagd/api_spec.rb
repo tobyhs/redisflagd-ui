@@ -102,11 +102,27 @@ RSpec.describe RedisFlagd::Api do
   end
 
   describe 'PUT /api/flags' do
+    let(:save_result) { true }
+    let(:flag_result) { string_flag }
+    let(:flag_form) do
+      instance_double(
+        RedisFlagd::FlagForm,
+        save: save_result,
+        flag: flag_result,
+      )
+    end
+
+    before do
+      allow(RedisFlagd::FlagForm).to receive(:new)
+        .with(string_flag.to_h)
+        .and_return(flag_form)
+    end
+
     shared_examples 'a flag upsert endpoint' do
       it 'upserts the flag' do
         expect(described_class.logger).to receive(:info)
           .with(expected_log_message)
-        expect(flags_repository).to receive(:upsert).with(string_flag)
+        expect(flag_form).to receive(:save)
         put(
           '/api/flags',
           string_flag.to_h.to_json,
@@ -146,6 +162,38 @@ RSpec.describe RedisFlagd::Api do
       end
 
       it_behaves_like 'a flag upsert endpoint'
+    end
+
+    context 'when there are validation errors' do
+      let(:save_result) { false }
+      let(:flag_result) { nil }
+      let(:am_errors) do
+        errors = ActiveModel::Errors.new(flag_form)
+        errors.add(:state, 'is not valid')
+        errors.add(:variants, 'is malformed')
+        errors
+      end
+
+      before do
+        allow(flags_repository).to receive(:get).with(string_flag.key)
+          .and_return(nil)
+        allow(flag_form).to receive(:errors).and_return(am_errors)
+      end
+
+      it 'responds with errors' do
+        put(
+          '/api/flags',
+          string_flag.to_h.to_json,
+          { 'CONTENT_TYPE' => 'application/json' },
+        )
+        expect(last_response.status).to eq(422)
+        expect(json_response).to eq({
+          'errors' => {
+            'state' => [{ 'message' => 'is not valid' }],
+            'variants' => [{ 'message' => 'is malformed' }],
+          },
+        })
+      end
     end
   end
 

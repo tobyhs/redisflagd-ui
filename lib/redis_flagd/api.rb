@@ -1,5 +1,6 @@
 require 'grape'
 
+require 'redis_flagd/flag_form'
 require 'redis_flagd/service_locator'
 
 module RedisFlagd
@@ -67,23 +68,29 @@ module RedisFlagd
       end
       put do
         previous_flag = ServiceLocator.flags_repository.get(params[:key])
-        configuration = declared(params, include_missing: false).except(:key)
-        flag = FeatureFlag.new(key: params[:key], configuration:)
-        ServiceLocator.flags_repository.upsert(flag)
+        flag_form = FlagForm.new(declared(params, include_missing: false))
 
-        if previous_flag
-          logger.info(ServiceLocator.resource_change_log_formatter.resource_updated(
-            headers:,
-            type: 'Flag',
-            previous_resource: previous_flag,
-            new_resource: flag,
-          ))
+        if flag_form.save
+          flag = flag_form.flag
+          if previous_flag
+            logger.info(ServiceLocator.resource_change_log_formatter.resource_updated(
+              headers:,
+              type: 'Flag',
+              previous_resource: previous_flag,
+              new_resource: flag,
+            ))
+          else
+            logger.info(ServiceLocator.resource_change_log_formatter.resource_created(
+              headers:, type: 'Flag', resource: flag,
+            ))
+          end
+          flag.to_h
         else
-          logger.info(ServiceLocator.resource_change_log_formatter.resource_created(
-            headers:, type: 'Flag', resource: flag,
-          ))
+          errors = flag_form.errors.as_json.transform_values do |messages|
+            messages.map { |message| { 'message' => message } }
+          end
+          error!({ 'errors' => errors }, 422)
         end
-        flag.to_h
       end
 
       desc 'Deletes a feature flag'
