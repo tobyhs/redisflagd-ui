@@ -60,19 +60,20 @@ RSpec.describe RedisFlagd::Api do
   describe 'GET /api/flags' do
     it 'returns feature flags' do
       flags = [boolean_flag, string_flag]
-      allow(flags_repository).to receive(:list).with(pattern: nil)
+      allow(flags_repository).to receive(:list).with(no_args)
         .and_return(flags)
       get '/api/flags'
       expect(last_response.status).to eq(200)
       expect(json_response).to eq(flags.map { |f| f.to_h.stringify_keys })
     end
 
-    context 'when given a pattern' do
-      it 'returns feature flags matching the pattern' do
+    context 'when given query parameters' do
+      it 'applies the query parameters to filter flags' do
         pattern = 'bool*'
-        allow(flags_repository).to receive(:list).with(pattern:)
+        after = 'aaa'
+        allow(flags_repository).to receive(:list).with(pattern:, after:)
           .and_return([boolean_flag])
-        get "/api/flags?pattern=#{pattern}"
+        get "/api/flags?pattern=#{pattern}&after=#{after}"
         expect(last_response.status).to eq(200)
         expect(json_response).to eq([boolean_flag.to_h.stringify_keys])
       end

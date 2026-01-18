@@ -69,6 +69,19 @@ RSpec.describe RedisFlagd::FlagsRepository do
       end
     end
 
+    context 'when an after argument is given' do
+      it 'returns feature flags with keys after' do
+        (0..4).each do |i|
+          redis.hset(
+            described_class::FLAGS_KEY,
+            "test-#{i}",
+            boolean_flag.configuration.to_json,
+          )
+        end
+        expect(repo.list(after: 'test-2').map(&:key)).to eq(%w[test-3 test-4])
+      end
+    end
+
     context 'when a limit is given' do
       it 'returns feature flags up to the limit' do
         expect(repo.list(limit: 1)).to eq(feature_flags.first(1))

@@ -38,10 +38,16 @@ module RedisFlagd
           type: String,
           desc: 'glob pattern to match against feature flag keys',
         )
+        optional(
+          :after,
+          type: String,
+          desc: 'only list flags with keys after this string',
+        )
       end
       get do
-        ServiceLocator.flags_repository.list(pattern: params[:pattern])
-          .map(&:to_h)
+        ServiceLocator.flags_repository.list(
+          **declared(params, include_missing: false).symbolize_keys,
+        ).map(&:to_h)
       end
 
       desc 'Gets a feature flag'
