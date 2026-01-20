@@ -41,13 +41,34 @@ describe('FlagsIndexPage', () => {
   }
 
   it('renders flags when there are flags', async () => {
-    stubFlagsApiWithFlags()
+    const flagStore = new Map<string, Flag>()
+    for (const flag of [
+      FlagFactory.booleanFlag(),
+      FlagFactory.stringFlag(),
+      { ...FlagFactory.booleanFlag(), key: 'on-next-page' },
+    ]) {
+      flagStore.set(flag.key, flag)
+    }
+    mockFlagsApi(flagStore, { pageSize: 2 })
+
     renderRoute('/flags')
-    const cells = await screen.findAllByRole('cell')
+    let cells = await screen.findAllByRole('cell')
     expect(cells.map(c => c.textContent)).toEqual([
       'basic-boolean', 'ENABLED', 'on',
       'basic-string', 'ENABLED', 'blue',
     ])
+
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: 'Load More' }))
+    cells = await screen.findAllByRole('cell')
+    expect(cells.map(c => c.textContent)).toEqual([
+      'basic-boolean', 'ENABLED', 'on',
+      'basic-string', 'ENABLED', 'blue',
+      'on-next-page', 'ENABLED', 'on',
+    ])
+
+    await user.click(screen.getByRole('button', { name: 'Load More' }))
+    expect(screen.queryByRole('button', { name: 'Load More' })).toBeNull()
   })
 
   it('filters flags after entering a pattern', async () => {

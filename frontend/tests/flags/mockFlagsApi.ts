@@ -4,15 +4,32 @@ import picomatch from 'picomatch'
 import type { Flag } from '../../src/flags/Flag'
 import { server } from '../test-helpers/mock-server'
 
-export function mockFlagsApi(flagStore: Map<string, Flag> = new Map<string, Flag>()) {
+interface MockFlagsApiOptions {
+  pageSize?: number
+}
+
+export function mockFlagsApi(
+  flagStore: Map<string, Flag> = new Map<string, Flag>(),
+  options: MockFlagsApiOptions = {},
+) {
   server.use(
     http.get('/api/flags', ({ request }) => {
-      const pattern = new URL(request.url).searchParams.get('pattern')
-      let flags = [...flagStore.values()]
+      const { searchParams } = new URL(request.url)
+      let flags = [...flagStore.values()].sort((a, b) => a.key.localeCompare(b.key))
+      const pattern = searchParams.get('pattern')
       if (pattern) {
         const isMatch = picomatch(pattern)
         flags = flags.filter(flag => isMatch(flag.key))
       }
+      let startIndex = 0
+      const after = searchParams.get('after')
+      if (after) {
+        startIndex = flags.findIndex(flag => flag.key.localeCompare(after) === 1)
+        if (startIndex === -1) {
+          startIndex = flags.length
+        }
+      }
+      flags = flags.slice(startIndex, options.pageSize && (startIndex + options.pageSize))
       return HttpResponse.json(flags)
     }),
 

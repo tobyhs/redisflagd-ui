@@ -1,5 +1,5 @@
-import { ActionIcon, Group, Loader, Stack, Table, TextInput, Tooltip } from '@mantine/core'
-import { useQuery } from '@tanstack/react-query'
+import { ActionIcon, Button, Group, Loader, Stack, Table, TextInput, Tooltip } from '@mantine/core'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { type JSX, type KeyboardEvent, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 
@@ -12,16 +12,32 @@ export function FlagsIndexPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const pattern = searchParams.get('pattern')
   const [patternValue, setPatternValue] = useState(pattern ?? '')
-  const { isPending, isError, data: flags } = useQuery({
+  const {
+    isPending,
+    isError,
+    data: flagsData,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['flags', 'list', { pattern }],
-    queryFn: async () => {
-      const queryStr = pattern ? `?pattern=${encodeURIComponent(pattern)}` : ''
+    queryFn: async ({ pageParam }) => {
+      const params = new URLSearchParams()
+      if (pattern) {
+        params.set('pattern', pattern)
+      }
+      if (pageParam) {
+        params.set('after', pageParam)
+      }
+      const queryStr = params.size === 0 ? '' : `?${params.toString()}`
       const response = await fetch(`/api/flags${queryStr}`)
       if (!response.ok) {
         throw new Error(await response.text())
       }
       return await response.json() as Flag[]
     },
+    initialPageParam: '',
+    getNextPageParam: lastPage => lastPage.at(-1)?.key,
   })
 
   let content: JSX.Element
@@ -29,10 +45,24 @@ export function FlagsIndexPage() {
     content = <Loader role="progressbar" />
   } else if (isError) {
     content = <div>Error: Something went wrong when loading feature flags</div>
-  } else if (flags.length === 0) {
-    content = <div>No feature flags found</div>
   } else {
-    content = <FlagsList flags={flags} />
+    const flags = flagsData.pages.flat()
+    if (flags.length === 0) {
+      content = <div>No feature flags found</div>
+    } else {
+      content = (
+        <>
+          <FlagsList flags={flags} />
+          { hasNextPage && (
+            <div>
+              <Button onClick={() => void fetchNextPage()} loading={isFetchingNextPage}>
+                Load More
+              </Button>
+            </div>
+          )}
+        </>
+      )
+    }
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
