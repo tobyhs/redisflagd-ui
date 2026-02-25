@@ -72,7 +72,7 @@ module RedisFlagd
         optional :targeting, type: Hash
         optional :metadata, type: Hash
       end
-      put do
+      put ':key' do
         previous_flag = ServiceLocator.flags_repository.get(params[:key])
         flag_form = FlagForm.new(declared(params, include_missing: false))
 

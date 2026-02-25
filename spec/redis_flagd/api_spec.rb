@@ -102,7 +102,7 @@ RSpec.describe RedisFlagd::Api do
     end
   end
 
-  describe 'PUT /api/flags' do
+  describe 'PUT /api/flags/:key' do
     let(:save_result) { true }
     let(:flag_result) { string_flag }
     let(:flag_form) do
@@ -125,7 +125,7 @@ RSpec.describe RedisFlagd::Api do
           .with(expected_log_message)
         expect(flag_form).to receive(:save)
         put(
-          '/api/flags',
+          "/api/flags/#{string_flag.key}",
           string_flag.to_h.to_json,
           { 'CONTENT_TYPE' => 'application/json' },
         )
@@ -183,7 +183,7 @@ RSpec.describe RedisFlagd::Api do
 
       it 'responds with errors' do
         put(
-          '/api/flags',
+          "/api/flags/#{string_flag.key}",
           string_flag.to_h.to_json,
           { 'CONTENT_TYPE' => 'application/json' },
         )

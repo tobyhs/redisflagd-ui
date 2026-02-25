@@ -102,8 +102,9 @@ describe('NewFlagPage', () => {
   })
 
   it('shows errors when there are backend validation errors', async () => {
+    const flag = FlagFactory.booleanFlag()
     server.use(
-      http.put('/api/flags', () => HttpResponse.json({
+      http.put(`/api/flags/${flag.key}`, () => HttpResponse.json({
         errors: {
           key: [{ message: 'Key is not valid.' }],
           state: [{ message: 'State is not valid.' }],
@@ -114,7 +115,7 @@ describe('NewFlagPage', () => {
         },
       } satisfies ValidationErrorBody<Flag>, { status: 422 })),
     )
-    await inputFlag(user, FlagFactory.booleanFlag())
+    await inputFlag(user, flag)
     await submitFlagForm(user)
 
     const expected: [HTMLElement, string][] = [
@@ -132,10 +133,11 @@ describe('NewFlagPage', () => {
   })
 
   it('shows an error when the PUT request fails', async () => {
+    const flag = FlagFactory.booleanFlag()
     server.use(
-      http.put('/api/flags', () => HttpResponse.json({}, { status: 500 })),
+      http.put(`/api/flags/${flag.key}`, () => HttpResponse.json({}, { status: 500 })),
     )
-    await inputFlag(user, FlagFactory.booleanFlag())
+    await inputFlag(user, flag)
     await submitFlagForm(user)
     await screen.findByText('An error occurred when saving the flag')
     checkForNoFlagCreated()

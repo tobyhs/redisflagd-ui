@@ -42,9 +42,9 @@ export function mockFlagsApi(
       }
     }),
 
-    http.put('/api/flags', async ({ request }) => {
+    http.put('/api/flags/:key', async ({ params, request }) => {
       const flag = await request.clone().json() as Flag
-      flagStore.set(flag.key, flag)
+      flagStore.set(params.key as string, flag)
       return HttpResponse.json(flag)
     }),
 

@@ -105,7 +105,7 @@ export function FlagForm({ flag }: FlagFormProps) {
   })
 
   const handleSubmit = async (flag: Flag) => {
-    const response = await fetch('/api/flags', {
+    const response = await fetch(`/api/flags/${flag.key}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(flag),
