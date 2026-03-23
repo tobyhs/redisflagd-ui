@@ -60,22 +60,45 @@ RSpec.describe RedisFlagd::Api do
   describe 'GET /api/flags' do
     it 'returns feature flags' do
       flags = [boolean_flag, string_flag]
-      allow(flags_repository).to receive(:list).with(no_args)
+      allow(flags_repository).to receive(:list)
+        .with(limit: described_class::DEFAULT_PAGE_SIZE + 1)
         .and_return(flags)
       get '/api/flags'
       expect(last_response.status).to eq(200)
-      expect(json_response).to eq(flags.map { |f| f.to_h.stringify_keys })
+      expect(json_response).to eq({
+        'data' => flags.map { |f| f.to_h.stringify_keys },
+        'nextCursor' => nil,
+      })
+    end
+
+    context 'when there are more pages' do
+      it 'responds with a nextCursor' do
+        stub_const('RedisFlagd::Api::DEFAULT_PAGE_SIZE', 1)
+        flags = [boolean_flag, string_flag]
+        allow(flags_repository).to receive(:list)
+          .with(limit: described_class::DEFAULT_PAGE_SIZE + 1)
+          .and_return(flags)
+        get '/api/flags'
+        expect(json_response).to eq({
+          'data' => [flags[0].to_h.stringify_keys],
+          'nextCursor' => flags[0].key,
+        })
+      end
     end
 
     context 'when given query parameters' do
       it 'applies the query parameters to filter flags' do
         pattern = 'bool*'
         after = 'aaa'
-        allow(flags_repository).to receive(:list).with(pattern:, after:)
+        allow(flags_repository).to receive(:list)
+          .with(pattern:, after:, limit: described_class::DEFAULT_PAGE_SIZE + 1)
           .and_return([boolean_flag])
         get "/api/flags?pattern=#{pattern}&after=#{after}"
         expect(last_response.status).to eq(200)
-        expect(json_response).to eq([boolean_flag.to_h.stringify_keys])
+        expect(json_response).to eq({
+          'data' => [boolean_flag.to_h.stringify_keys],
+          'nextCursor' => nil,
+        })
       end
     end
   end

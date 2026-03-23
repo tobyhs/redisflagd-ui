@@ -66,8 +66,6 @@ describe('FlagsIndexPage', () => {
       'basic-string', 'ENABLED', 'blue',
       'on-next-page', 'ENABLED', 'on',
     ])
-
-    await user.click(screen.getByRole('button', { name: 'Load More' }))
     expect(screen.queryByRole('button', { name: 'Load More' })).toBeNull()
   })
 

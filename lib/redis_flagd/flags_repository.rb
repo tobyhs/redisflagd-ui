@@ -6,7 +6,7 @@ module RedisFlagd
   # A repository to manage RedisFlagd feature flags
   class FlagsRepository
     FLAGS_KEY = 'flagd:flags'.freeze
-    DEFAULT_LIMIT = 50
+    DEFAULT_LIMIT = 20
 
     # @param redis [Redis] Redis client
     def initialize(redis)

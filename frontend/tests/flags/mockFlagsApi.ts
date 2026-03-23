@@ -29,8 +29,12 @@ export function mockFlagsApi(
           startIndex = flags.length
         }
       }
-      flags = flags.slice(startIndex, options.pageSize && (startIndex + options.pageSize))
-      return HttpResponse.json(flags)
+      const pageSize = options.pageSize ?? 20
+      const data = flags.slice(startIndex, startIndex + pageSize)
+      return HttpResponse.json({
+        data,
+        nextCursor: flags[startIndex + pageSize] ? data[pageSize - 1].key : null,
+      })
     }),
 
     http.get<{ key: string }>('/api/flags/:key', ({ params }) => {

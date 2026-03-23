@@ -3,6 +3,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { type JSX, type KeyboardEvent, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 
+import type { ApiPage } from '../api/pagination'
 import type { Flag } from './Flag'
 
 /**
@@ -34,10 +35,10 @@ export function FlagsIndexPage() {
       if (!response.ok) {
         throw new Error(await response.text())
       }
-      return await response.json() as Flag[]
+      return await response.json() as ApiPage<Flag>
     },
     initialPageParam: '',
-    getNextPageParam: lastPage => lastPage.at(-1)?.key,
+    getNextPageParam: lastPage => lastPage.nextCursor,
   })
 
   let content: JSX.Element
@@ -46,7 +47,7 @@ export function FlagsIndexPage() {
   } else if (isError) {
     content = <div>Error: Something went wrong when loading feature flags</div>
   } else {
-    const flags = flagsData.pages.flat()
+    const flags = flagsData.pages.map(page => page.data).flat()
     if (flags.length === 0) {
       content = <div>No feature flags found</div>
     } else {

@@ -16,6 +16,8 @@ module RedisFlagd
       end
     end
 
+    DEFAULT_PAGE_SIZE = 20
+
     FORM_CONTENT_TYPES = %w[
       application/x-www-form-urlencoded
       multipart/form-data
@@ -45,9 +47,14 @@ module RedisFlagd
         )
       end
       get do
-        ServiceLocator.flags_repository.list(
+        flags = ServiceLocator.flags_repository.list(
           **declared(params, include_missing: false).symbolize_keys,
-        ).map(&:to_h)
+          limit: DEFAULT_PAGE_SIZE + 1,
+        )
+        {
+          data: flags.first(DEFAULT_PAGE_SIZE).map(&:to_h),
+          nextCursor: flags[DEFAULT_PAGE_SIZE] ? flags[DEFAULT_PAGE_SIZE - 1].key : nil,
+        }
       end
 
       desc 'Gets a feature flag'
