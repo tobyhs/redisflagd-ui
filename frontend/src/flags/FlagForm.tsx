@@ -126,7 +126,7 @@ export function FlagForm({ flag }: FlagFormProps) {
     } else if (!response.ok) {
       showNotification({ color: 'red', message: 'An error occurred when saving the flag' })
     } else {
-      await queryClient.invalidateQueries({ queryKey: ['flags', 'get', flag.key] })
+      await queryClient.setQueryData(['flags', 'get', flag.key], await response.json())
       await queryClient.invalidateQueries({ queryKey: ['flags', 'list'] })
       showNotification({ message: `Flag saved: ${flag.key}` })
       await navigate('/flags')

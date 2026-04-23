@@ -34,6 +34,7 @@ describe('NewFlagPage', () => {
   })
 
   it('renders a form to create a new flag', async () => {
+    const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData')
     const invalidateQueriesSpy = vi.spyOn(queryClient, 'invalidateQueries')
     const flag = FlagFactory.stringFlag()
     await inputFlag(user, flag)
@@ -41,7 +42,7 @@ describe('NewFlagPage', () => {
 
     await screen.findByText(`Flag saved: ${flag.key}`)
     expect.soft([...flagStore.values()]).toEqual([flag])
-    expect.soft(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['flags', 'get', flag.key] })
+    expect.soft(setQueryDataSpy).toHaveBeenCalledWith(['flags', 'get', flag.key], flag)
     expect.soft(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['flags', 'list'] })
     expect.soft(window.location.pathname).toEqual('/flags')
   })
