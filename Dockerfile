@@ -23,6 +23,7 @@ RUN BUILD_DEPS='build-base yaml-dev' && \
   bundle install && \
   apk del -r $BUILD_DEPS
 
+COPY flagd-schemas flagd-schemas
 COPY config.ru ./
 COPY lib lib
 COPY --from=frontend-build /app/dist frontend/dist
