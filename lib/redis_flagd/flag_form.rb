@@ -1,6 +1,5 @@
 require 'active_model'
 require 'json_schemer'
-require 'pathname'
 
 require 'redis_flagd/feature_flag'
 require 'redis_flagd/service_locator'
@@ -81,9 +80,9 @@ module RedisFlagd
 
       values = variants.values
       unless values.all? { |v| [true, false].include?(v) } ||
-          values.all? { |v| v.is_a?(Numeric) } ||
-          values.all? { |v| v.is_a?(String) } ||
-          values.all? { |v| v.is_a?(Hash) }
+          values.all?(Numeric) ||
+          values.all?(String) ||
+          values.all?(Hash)
         errors.add(:variants, 'must have values of the same type')
       end
     end

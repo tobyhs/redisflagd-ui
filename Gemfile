@@ -11,7 +11,7 @@ gem 'ruby-handlebars', '~> 0.4'
 
 group :development do
   gem 'irb'
-  gem 'rubocop', '~> 1.81'
+  gem 'rubocop', '~> 1.82'
   gem 'rubocop-rspec', '~> 3.8'
   gem 'yard'
 end
