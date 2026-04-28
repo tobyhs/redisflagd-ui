@@ -156,7 +156,7 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
-    unicode-emoji (4.1.0)
+    unicode-emoji (4.2.0)
     uri (1.1.1)
     yard (0.9.42)
     zeitwerk (2.7.3)
@@ -181,4 +181,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   2.6.9
+  4.0.6
