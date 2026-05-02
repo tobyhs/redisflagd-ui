@@ -13,7 +13,7 @@ FROM ruby:4.0.3-alpine3.23
 
 RUN bundle config --global frozen 1
 EXPOSE 9292
-ENV APP_ENV production
+ENV APP_ENV=production
 
 WORKDIR /app
 RUN bundle config without development:test
