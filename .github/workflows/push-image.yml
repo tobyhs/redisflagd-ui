@@ -1,0 +1,25 @@
+name: Push Image
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  push_image:
+    uses: docker/github-builder/.github/workflows/build.yml@v1
+    permissions:
+      id-token: write
+      packages: write
+    with:
+      output: image
+      push: true
+      meta-images: ghcr.io/${{ github.repository }}
+      meta-tags: |
+        type=semver,pattern={{version}}
+      set-meta-labels: true
+    secrets:
+      registry-auths: |
+        - registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
