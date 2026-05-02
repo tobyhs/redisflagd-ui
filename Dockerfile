@@ -11,12 +11,12 @@ RUN npm run build
 
 FROM ruby:4.0.3-alpine3.23
 
-RUN bundle config --global frozen 1
+RUN bundle config set --global frozen 1
 EXPOSE 9292
 ENV APP_ENV=production
 
 WORKDIR /app
-RUN bundle config without development:test
+RUN bundle config set without development:test
 COPY Gemfile Gemfile.lock ./
 RUN BUILD_DEPS='build-base yaml-dev' && \
   apk add --no-cache $BUILD_DEPS && \
