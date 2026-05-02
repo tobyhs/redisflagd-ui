@@ -41,6 +41,10 @@ Naming/PredicateMethod:
   AllowedMethods:
     - save
 
+RSpec/DescribeClass:
+  Exclude:
+    - integration_spec/**/*
+
 RSpec/ExampleLength:
   Enabled: false
 

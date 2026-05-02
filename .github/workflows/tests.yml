@@ -8,7 +8,7 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     services:
-      redis:
+      redis: &redis_service
         image: redis:8-alpine
         options: >-
           --health-cmd "redis-cli ping"
@@ -18,7 +18,7 @@ jobs:
         ports:
           - 6379:6379
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
       - uses: ruby/setup-ruby@v1
@@ -29,6 +29,7 @@ jobs:
       - name: RSpec
         run: bundle exec rspec
         env:
+          COVERAGE: 1
           TEST_REDIS_URL: redis://localhost
 
   frontend:
@@ -37,7 +38,7 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
@@ -47,3 +48,25 @@ jobs:
       - run: npm run lint
       - run: npm run build
       - run: npm run test
+
+  integration_tests:
+    runs-on: ubuntu-latest
+    services:
+      redis: *redis_service
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+      - name: Docker Build
+        run: docker build -t redisflagd-ui .
+      - name: Start redisflagd-ui container
+        run: docker run -d --rm --name redisflagd-ui --add-host host.docker.internal:host-gateway -e REDIS_URL=redis://host.docker.internal -p 9292:9292 redisflagd-ui
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: Integration Tests
+        run: bundle exec rspec integration_spec
+        env:
+          TEST_REDIS_URL: redis://unused
+      - name: Stop redisflagd-ui container
+        run: docker stop redisflagd-ui

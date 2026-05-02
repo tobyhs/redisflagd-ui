@@ -1,6 +1,6 @@
 require 'simplecov'
 
-if ENV['COVERAGE'] || ENV['CI']
+if ENV['COVERAGE']
   SimpleCov.start do
     enable_coverage :branch
     minimum_coverage line: 100, branch: 100
