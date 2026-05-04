@@ -6,7 +6,7 @@ require 'redis_flagd/resource_change_log_formatter'
 RSpec.describe RedisFlagd::ResourceChangeLogFormatter do
   subject(:formatter) { described_class.new }
 
-  let(:headers) { Rack::Headers['X-Auth-Request-Email', 'john@example.com'] }
+  let(:headers) { Rack::Headers['X-Forwarded-Email', 'john@example.com'] }
   let(:flag) do
     RedisFlagd::FeatureFlag.new(
       key: 'test_flag',
@@ -41,7 +41,7 @@ RSpec.describe RedisFlagd::ResourceChangeLogFormatter do
     context 'when the LOG_TEMPLATE_RESOURCE_CREATED env var is set' do
       before do
         allow(ENV).to receive(:[]).with('LOG_TEMPLATE_RESOURCE_CREATED')
-          .and_return('{{headers.X-Auth-Request-Email}} created {{resource.key}}')
+          .and_return('{{headers.X-Forwarded-Email}} created {{resource.key}}')
       end
 
       it 'returns a log message' do
@@ -84,7 +84,7 @@ RSpec.describe RedisFlagd::ResourceChangeLogFormatter do
     context 'when the LOG_TEMPLATE_RESOURCE_UPDATED env var is set' do
       before do
         allow(ENV).to receive(:[]).with('LOG_TEMPLATE_RESOURCE_UPDATED')
-          .and_return('{{headers.X-Auth-Request-Email}} updated {{new_resource.key}}')
+          .and_return('{{headers.X-Forwarded-Email}} updated {{new_resource.key}}')
       end
 
       it 'returns a log message' do
@@ -108,7 +108,7 @@ RSpec.describe RedisFlagd::ResourceChangeLogFormatter do
     context 'when the LOG_TEMPLATE_RESOURCE_DELETED env var is set' do
       before do
         allow(ENV).to receive(:[]).with('LOG_TEMPLATE_RESOURCE_DELETED')
-          .and_return('{{headers.X-Auth-Request-Email}} deleted {{key}}')
+          .and_return('{{headers.X-Forwarded-Email}} deleted {{key}}')
       end
 
       it 'returns a log message' do
