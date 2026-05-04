@@ -2,6 +2,10 @@
 
 RedisFlagd UI is a web app to manage [RedisFlagd](https://github.com/tobyhs/redisflagd) feature flags.
 
+## Container Images
+
+Container images are pushed to GitHub Packages at [ghcr.io/tobyhs/redisflagd-ui:latest](https://github.com/tobyhs/redisflagd-ui/pkgs/container/redisflagd-ui) after a release is published.
+
 ## Configuration
 
 RedisFlagd UI can be configured with the following environment variables:
@@ -14,6 +18,8 @@ RedisFlagd UI can be configured with the following environment variables:
 | `LOG_TEMPLATE_RESOURCE_DELETED` | Handlebars template for the message logged when a resource is deleted. Available variables are `headers` (request headers), `type` (type of resource), and `key` (key of deleted resource) |
 
 Handlebars templates have a `json_stringify` helper to serialize JSON objects.
+
+For authentication, you can use something like [OAuth2 Proxy](https://oauth2-proxy.github.io/oauth2-proxy/) and include `{{headers.X-Forwarded-Email}}` in the `LOG_TEMPLATE_RESOURCE_`-prefixed environment variables for auditing.
 
 ## Development
 
