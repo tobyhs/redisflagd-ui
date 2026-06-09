@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 gem 'activemodel', '~> 8.1'
 gem 'grape', '~> 3.0'
 gem 'json_schemer', '~> 2.5'
-gem 'puma', '~> 7.1'
+gem 'puma', '~> 7.2'
 gem 'redis', '~> 5.4'
 gem 'ruby-handlebars', '~> 0.4'
 
