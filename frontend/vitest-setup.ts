@@ -1,12 +1,10 @@
 import { cleanNotifications } from '@mantine/notifications'
 import { cleanup } from '@testing-library/react'
-import type { DOMWindow } from 'jsdom'
 import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 
 import { server } from './tests/test-helpers/mock-server'
 
 // window mocks from https://mantine.dev/guides/vitest/
-declare const window: DOMWindow
 window.HTMLElement.prototype.scrollIntoView = vi.fn()
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -20,6 +18,10 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
+})
+Object.defineProperty(document, 'fonts', {
+  writable: true,
+  value: { addEventListener: vi.fn(), removeEventListener: vi.fn() },
 })
 class ResizeObserver {
   // eslint-disable-next-line @typescript-eslint/no-empty-function

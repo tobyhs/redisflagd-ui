@@ -18,7 +18,7 @@ export async function inputKey(user: UserEvent, key: string) {
 }
 
 export async function selectState(user: UserEvent, state: Flag['state']) {
-  await user.click(await screen.findByRole('textbox', { name: 'State' }))
+  await user.click(await screen.findByRole('combobox', { name: 'State' }))
   await user.click(await screen.findByRole('option', { name: state }))
 }
 
@@ -27,7 +27,7 @@ export async function inputVariants(user: UserEvent, variants: string) {
 }
 
 export async function selectDefaultVariant(user: UserEvent, defaultVariant: string | null) {
-  await user.click(await screen.findByRole('textbox', { name: 'Default Variant' }))
+  await user.click(await screen.findByRole('combobox', { name: 'Default Variant' }))
   await user.click(await screen.findByRole('option', { name: defaultVariant ?? '' }))
 }
 

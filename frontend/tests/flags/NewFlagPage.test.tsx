@@ -121,9 +121,9 @@ describe('NewFlagPage', () => {
 
     const expected: [HTMLElement, string][] = [
       [screen.getByLabelText('Key *'), 'Key is not valid.'],
-      [screen.getByRole('textbox', { name: 'State' }), 'State is not valid.'],
+      [screen.getByRole('combobox', { name: 'State' }), 'State is not valid.'],
       [screen.getByLabelText('Variants *'), 'Variants is not valid.<br>Other error.'],
-      [screen.getByRole('textbox', { name: 'Default Variant' }), 'defaultVariant is not valid.'],
+      [screen.getByRole('combobox', { name: 'Default Variant' }), 'defaultVariant is not valid.'],
       [screen.getByLabelText('Targeting'), 'Targeting is not valid.'],
       [screen.getByLabelText('Metadata'), 'Metadata is not valid.'],
     ]
