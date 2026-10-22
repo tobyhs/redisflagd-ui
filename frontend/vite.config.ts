@@ -11,7 +11,7 @@ export default defineConfig({
       '/api/': 'http://localhost:9292',
     },
     watch: {
-      ignored: [path.resolve(__dirname, 'coverage')],
+      ignored: [path.resolve(import.meta.dirname, 'coverage')],
     },
   },
   test: {
