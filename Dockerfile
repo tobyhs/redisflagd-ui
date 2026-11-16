@@ -9,7 +9,7 @@ COPY frontend/src src
 RUN npm run build
 
 
-FROM ruby:4.0.3-alpine3.23
+FROM ruby:4.0.9-alpine3.24
 
 RUN bundle config set --global frozen 1
 EXPOSE 9292
